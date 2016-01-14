@@ -3,31 +3,18 @@ import battlecode.common.*;
 import java.util.Random;
 
 public class Archon extends DefaultRobot{
-	Movement move = new Movement();
+	Boolean buildScoutOnce;
 			
 	public Archon(RobotController rc) throws GameActionException {
 		super(rc);
+		buildScoutOnce = false;
 	}
 	
 	@Override
 	public void executeTurn() throws GameActionException{
-		runAwayFromEnemies();
+		move.runAwayFromEnemies();
 		collectParts();
-		if(rc.isCoreReady()){
-			for(int i: Utils.allDirections){
-				if(rand.nextInt(3) == 0){
-					if(rc.canBuild(Direction.values()[i], RobotType.GUARD)){
-						rc.build(Direction.values()[i], RobotType.GUARD);
-						return;
-					}
-				} else {
-					if(rc.canBuild(Direction.values()[i], RobotType.SOLDIER)){
-						rc.build(Direction.values()[i], RobotType.SOLDIER);
-						return;
-					}					
-				}
-			}
-		}
+		buildUnits();
 		moveRandomly();
 	}
 	
@@ -42,14 +29,38 @@ public class Archon extends DefaultRobot{
 		}
 	}
 	
-	public void runAwayFromEnemies() throws GameActionException{
-		RobotInfo[] zombieEnemies = rc.senseNearbyRobots(rc.getType().sensorRadiusSquared, Team.ZOMBIE);
-		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(rc.getType().sensorRadiusSquared, rc.getTeam().opponent());
-		if(zombieEnemies.length > 0){
-			move.runAwayFromLocation(zombieEnemies[0].location);
-		}
-		if(opponentEnemies.length > 0){
-			move.runAwayFromLocation(opponentEnemies[0].location);
-		}		
+
+	
+	public void buildUnits() throws GameActionException{
+		if(rc.isCoreReady()){
+			for(int i: Utils.allDirections){
+				//build a scout if an archon haven't build one yet
+				if(!buildScoutOnce){
+					if(rc.canBuild(Direction.values()[i], RobotType.SCOUT)){
+						rc.build(Direction.values()[i], RobotType.SCOUT);
+						buildScoutOnce = true;
+						return;
+					}
+				}
+				int prob = rand.nextInt(20);
+				//otherwise build units given the buildProbabilities
+				if(prob < 5){
+					if(rc.canBuild(Direction.values()[i], RobotType.GUARD)){
+						rc.build(Direction.values()[i], RobotType.GUARD);
+						return;
+					}
+				} else if(prob < 19) {
+					if(rc.canBuild(Direction.values()[i], RobotType.SOLDIER)){
+						rc.build(Direction.values()[i], RobotType.SOLDIER);
+						return;
+					}					
+				} else {
+					if(rc.canBuild(Direction.values()[i], RobotType.SCOUT)){
+						rc.build(Direction.values()[i], RobotType.SCOUT);
+						return;
+					}	
+				}
+			}
+		}	
 	}
 }

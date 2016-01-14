@@ -28,6 +28,18 @@ public class DefaultRobot {
 				}
 			}
 		}
+		
+		public void runAwayFromEnemies() throws GameActionException{
+			RobotInfo[] zombieEnemies = rc.senseNearbyRobots(rc.getType().sensorRadiusSquared, Team.ZOMBIE);
+			RobotInfo[] opponentEnemies = rc.senseNearbyRobots(rc.getType().sensorRadiusSquared, rc.getTeam().opponent());
+			if(zombieEnemies.length > 0){
+				move.runAwayFromLocation(zombieEnemies[0].location);
+			}
+			if(opponentEnemies.length > 0){
+				move.runAwayFromLocation(opponentEnemies[0].location);
+			}		
+		}
+		
 	}
 	
 	RobotController rc;

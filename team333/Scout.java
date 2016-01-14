@@ -6,4 +6,10 @@ public class Scout extends DefaultRobot{
 		super(rc);
 	}
 
+	@Override
+	public void executeTurn() throws GameActionException{
+		move.runAwayFromEnemies();
+		moveRandomly();
+	}
+	
 }
