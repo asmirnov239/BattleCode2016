@@ -5,6 +5,7 @@ import java.util.Random;
 
 public class DefaultRobot {
 	Movement move = new Movement();
+	
 	class Movement {
 		public void moveTowardsLocationAndDig(MapLocation loc) throws GameActionException{
 			Direction moveDirection = rc.getLocation().directionTo(loc);
@@ -45,6 +46,8 @@ public class DefaultRobot {
 	RobotController rc;
 	RobotType rt;
 	static Random rand;
+	Message message = new Message(rc);
+	
 	
 	public DefaultRobot(RobotController rc){
 		this.rc = rc;
@@ -70,7 +73,7 @@ public class DefaultRobot {
 		RobotInfo[] zombieEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, Team.ZOMBIE);
 		
 		if(zombieEnemies.length > 0){
-			sendDistressSignal();
+			message.sendDistressSignal();
 			if(rc.isWeaponReady()){
 				rc.attackLocation(zombieEnemies[0].location);
 			}
@@ -83,7 +86,7 @@ public class DefaultRobot {
 		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
 		
 		if(opponentEnemies.length > 0){
-			sendDistressSignal();
+			message.sendDistressSignal();
 			if(rc.isWeaponReady()){
 				rc.attackLocation(opponentEnemies[0].location);
 			}
@@ -94,7 +97,7 @@ public class DefaultRobot {
 		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
 
 		if(opponentEnemies.length > 0) {
-			sendDistressSignal();
+			message.sendDistressSignal();
 
 			double minHealth = rt.maxHealth;
 			MapLocation targetLocation = opponentEnemies[0].location;
@@ -129,14 +132,11 @@ public class DefaultRobot {
 		}
 	}
 	
-	public void sendDistressSignal() throws GameActionException{
-	 	rc.broadcastSignal(400);
-	}
-	
 	public void followDistressSignal() throws GameActionException{
 		Signal[] distressSignals = rc.emptySignalQueue();
 		if(distressSignals.length > 0){
 		  move.moveTowardsLocationAndDig(distressSignals[0].getLocation());
 		}
 	}
+	
 }
