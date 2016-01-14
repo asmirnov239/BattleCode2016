@@ -77,6 +77,33 @@ public class DefaultRobot {
 			}
 		}
 	}
+	
+	public void attackType(RobotType rt) throws GameActionException{
+		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
+
+		if(opponentEnemies.length > 0) {
+			sendDistressSignal();
+
+			double minHealth = rt.maxHealth;
+			MapLocation targetLocation = opponentEnemies[0].location;
+			boolean found = false;
+
+			for(RobotInfo info:opponentEnemies) {
+				if((info.type == rt) && (info.health <= minHealth)){
+					targetLocation = info.location;
+					found = true;
+				}
+			}
+
+
+			if(found && rc.isWeaponReady()) {
+				rc.attackLocation(targetLocation);
+			} else if (rc.isWeaponReady()) {
+				rc.attackLocation(opponentEnemies[0].location);
+			}
+		}
+	}
+	
 	public void moveRandomly() throws GameActionException{
 		int n = rand.nextInt(8);
 		Direction randomDir = Direction.values()[n];
