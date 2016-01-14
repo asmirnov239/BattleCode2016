@@ -93,7 +93,7 @@ public class DefaultRobot {
 		}
 	}
 	
-	public void attackType(RobotType rt) throws GameActionException{
+	public void attackWeakest(RobotType rt) throws GameActionException{
 		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
 
 		if(opponentEnemies.length > 0) {
@@ -101,21 +101,16 @@ public class DefaultRobot {
 
 			double minHealth = rt.maxHealth;
 			MapLocation targetLocation = opponentEnemies[0].location;
-			boolean found = false;
 
 			for(RobotInfo info:opponentEnemies) {
-				if((info.type == rt) && (info.health <= minHealth)){
+				if(info.health <= minHealth){
 					targetLocation = info.location;
-					found = true;
 				}
 			}
 
-
-			if(found && rc.isWeaponReady()) {
+			if(rc.isWeaponReady()) {
 				rc.attackLocation(targetLocation);
-			} else if (rc.isWeaponReady()) {
-				rc.attackLocation(opponentEnemies[0].location);
-			}
+			} 
 		}
 	}
 	
