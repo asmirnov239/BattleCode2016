@@ -93,17 +93,18 @@ public class DefaultRobot {
 		}
 	}
 	
-	public void attackWeakest(RobotType rt) throws GameActionException{
+	public void attackWeakest() throws GameActionException{
 		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
 
 		if(opponentEnemies.length > 0) {
 			message.sendDistressSignal();
 
-			double minHealth = rt.maxHealth;
+			double minHealth = RobotType.ARCHON.maxHealth;
 			MapLocation targetLocation = opponentEnemies[0].location;
 
 			for(RobotInfo info:opponentEnemies) {
 				if(info.health <= minHealth){
+					minHealth = info.health;
 					targetLocation = info.location;
 				}
 			}
