@@ -5,6 +5,13 @@ import java.util.Random;
 
 public class DefaultRobot {
 	Movement move = new Movement();
+	Message msg = new Message();
+	
+	class Message {
+		public void sendDistressSignal() throws GameActionException{
+		 	rc.broadcastSignal(400);
+		}		
+	}
 	
 	class Movement {
 		public void moveTowardsLocationAndDig(MapLocation loc) throws GameActionException{
@@ -45,9 +52,7 @@ public class DefaultRobot {
 	
 	RobotController rc;
 	RobotType rt;
-	static Random rand;
-	Message message = new Message(rc);
-	
+	static Random rand;	
 	
 	public DefaultRobot(RobotController rc){
 		this.rc = rc;
@@ -73,7 +78,7 @@ public class DefaultRobot {
 		RobotInfo[] zombieEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, Team.ZOMBIE);
 		
 		if(zombieEnemies.length > 0){
-			message.sendDistressSignal();
+			msg.sendDistressSignal();
 			if(rc.isWeaponReady()){
 				rc.attackLocation(zombieEnemies[0].location);
 			}
@@ -86,7 +91,7 @@ public class DefaultRobot {
 		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
 		
 		if(opponentEnemies.length > 0){
-			message.sendDistressSignal();
+			msg.sendDistressSignal();
 			if(rc.isWeaponReady()){
 				rc.attackLocation(opponentEnemies[0].location);
 			}
@@ -97,7 +102,7 @@ public class DefaultRobot {
 		RobotInfo[] opponentEnemies = rc.senseNearbyRobots(this.rt.attackRadiusSquared, rc.getTeam().opponent());
 
 		if(opponentEnemies.length > 0) {
-			message.sendDistressSignal();
+			msg.sendDistressSignal();
 
 			double minHealth = RobotType.ARCHON.maxHealth;
 			MapLocation targetLocation = opponentEnemies[0].location;
