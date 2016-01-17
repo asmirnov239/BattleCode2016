@@ -7,11 +7,39 @@ public class Scout extends DefaultRobot{
 	}
 
 	Direction currentDir = Direction.NORTH;
-
+	MapLocation[] markedDens = new MapLocation[GameConstants.MAP_MAX_HEIGHT * GameConstants.MAP_MAX_WIDTH];
+	static int maxBroadcast = 2500;	
+	
 	@Override
 	public void executeTurn() throws GameActionException{
 		move.runAwayFromEnemies();
 		moveScout();
+		detectZombieDen();
+	}
+	
+	public void detectZombieDen() throws GameActionException {
+		RobotInfo[] zombieEnemies = rc.senseNearbyRobots(rc.getType().sensorRadiusSquared, Team.ZOMBIE);
+	
+		int x, y;
+		boolean marked = false;
+		for(RobotInfo zombie:zombieEnemies) {
+			if(zombie.type == RobotType.ZOMBIEDEN) {
+				
+				//check if already marked
+				marked = false;
+				for(MapLocation loc:markedDens) {
+					if(loc == zombie.location) {
+						marked = true;
+					}
+				}
+				
+				if(!marked) {
+					x = zombie.location.x;
+					y = zombie.location.y;
+					rc.broadcastMessageSignal(x, y, maxBroadcast);
+				}
+			} 
+		}
 	}
 	
 	public void moveScout() throws GameActionException {
@@ -27,6 +55,6 @@ public class Scout extends DefaultRobot{
 			}
 			rc.move(currentDir);
 		}
-	}	
+	}
 	
 }
