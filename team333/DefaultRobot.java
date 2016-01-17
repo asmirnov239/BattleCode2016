@@ -133,6 +133,21 @@ public class DefaultRobot {
 		}
 	}
 	
+	// receives location from scout of den and attacks that location
+	public void attackDen() throws GameActionException{
+		Signal[] signalQueue = rc.emptySignalQueue();
+		int[] msg;
+		for(Signal sig:signalQueue){
+			if(sig.getTeam() == Team.A) {
+				msg = sig.getMessage();
+				if(msg != null){
+					MapLocation denLocation = new MapLocation(msg[0], msg[1]);
+					move.moveTowardsLocationAndDig(denLocation);
+				}
+			}
+		}
+	}
+	
 	public void followDistressSignal() throws GameActionException{
 		Signal[] distressSignals = rc.emptySignalQueue();
 		if(distressSignals.length > 0){
