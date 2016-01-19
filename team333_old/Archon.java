@@ -17,9 +17,7 @@ public class Archon extends DefaultRobot{
 	
 	@Override
 	public void executeTurn() throws GameActionException{
-		activateNeutralRobots();
 		move.runAwayFromEnemies();
-		moveTowardsNeutralRobots();
 		collectParts();
 		buildUnits();
 		moveRandomly();
@@ -36,28 +34,7 @@ public class Archon extends DefaultRobot{
 		}
 	}
 	
-	public void activateNeutralRobots() throws GameActionException{
-	 	RobotInfo[] neutralBots = rc.senseNearbyRobots(rc.getLocation(), 9, Team.NEUTRAL);
-	 	if(rc.isCoreReady()){
-	 	    if(neutralBots.length > 0){
-	 	  	    for(RobotInfo i: neutralBots){
-	 	            if(i.location.isAdjacentTo(rc.getLocation())){
-	 			        rc.activate(i.location);	
-	 			        return;
-	 	            }
-	 		    }
-	 	    }
-	 	}
-	}
-	
-	public void moveTowardsNeutralRobots() throws GameActionException{
-	 	RobotInfo[] neutralBots = rc.senseNearbyRobots(rc.getLocation(), 16, Team.NEUTRAL);
-	 	if(rc.isCoreReady()){
-	 	    if(neutralBots.length > 0){
-	 	  	    move.moveTowardsLocationAndDig(neutralBots[0].location);
-	 	    }
-	 	}		
-	}
+
 	
 	public void buildUnits() throws GameActionException{
 		if(rc.isCoreReady()){
